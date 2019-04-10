@@ -1,5 +1,5 @@
 ﻿<#
- NAME: New-PureSnapshot.ps1
+ NAME  : New-PureSnapshot.ps1
  AUTHOR: Jake Dennis
  DATE  : 4/8/2019
  DESCRIPTION
@@ -8,14 +8,21 @@
 
 function New-PureSnapshot{
     function Connect-PureArray{
-        if(Get-Module -ListAvailable -Name PureStoragePowerShellSDK){
-            Write-Output ""
-            Write-Output "Verified Pure PowerShell Module is installed."
-            Write-Output ""
-            Get-Module -Name PureStoragePowerShellSDK
+        $ModuleName="PureStoragePowerShellSDK"
+        try{
+            if(Get-Module | Where-Object {$_.Name -eq $ModuleName}){
+                Write-Output ""
+                Write-Output "Loading $($ModuleName)..."
+                Write-Output ""
+            }
+            else{
+            Write-Output "Attempting to install $($ModuleName)."
+            Install-Module -Name $ModuleName   
+            }
+            Import-Module -Name $ModuleName
         }
-        else{
-            Write-Host "There was a problem finding the PureStoragePowerShellSDK module."
+        catch{
+            Write-Host "There was a problem installing the PureStoragePowerShellSDK module."
             Write-Host "Consult Pure Support's documentation regarding installation of the binary."
             Start-Sleep -Seconds 10
             Exit
